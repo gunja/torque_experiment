@@ -9,7 +9,7 @@
 
 #include <ethercat.h>
 
-void configurePDO(int SlaveNum, uint16_t coveringSlot, uint16_t PDOslot, std::list<uint32_t> pdo_maps ){
+void configurePDO(int SlaveNum, uint16_t coveringSlot, uint16_t PDOslot, std::list<uint32_t> pdo_maps, bool read180x_2 = false ){
 
         std::cout<<"Getting "<<std::hex<<coveringSlot<<".1";
 	uint32_t v1800_1;
@@ -24,6 +24,22 @@ void configurePDO(int SlaveNum, uint16_t coveringSlot, uint16_t PDOslot, std::li
 	    rv = ec_SDOwrite( SlaveNum, coveringSlot, 1, FALSE, sz, &v1800_1, EC_TIMEOUTRXM);
 	  std::cout<<"  wrote "<<std::hex<<coveringSlot<<std::dec<<".1  with "<<rv<<std::endl;
 	   sz = sizeof(v1800_1);
+
+    std::cout<<"\t\tgetting "<<coveringSlot<<".0";
+    uint8_t zero_pos;
+    sz = sizeof(zero_pos);
+    rv = ec_SDOread(SlaveNum, coveringSlot, 0, FALSE, &sz, &zero_pos, EC_TIMEOUTRXM);
+    std::cout<<" rzlt as "<<rv<<"with decimal value = "<<static_cast<int>(zero_pos)<<std::endl;
+
+
+if(read180x_2) {
+        uint8_t trans_type;
+        sz = sizeof(trans_type);
+        rv = ec_SDOread(SlaveNum, coveringSlot, 2, FALSE, &sz, &trans_type, EC_TIMEOUTRXM);
+        std::cout<<"\t\tgetting "<<std::hex<<coveringSlot<<std::dec<<".2 -> "<<static_cast<int>(trans_type)<<"   at rez ="<<rv<<std::endl;
+    }
+
+        sz = sizeof(v1800_1);
 	   rv = ec_SDOread(SlaveNum, coveringSlot, 1, FALSE, &sz, &v1800_1, EC_TIMEOUTRXM);
 	   std::cout<<" resulted in   "<<rv<<"  with altered sz="<<sz<<"   and value = "<<
 		    std::hex<<v1800_1<<std::dec<<std::endl;
@@ -44,6 +60,30 @@ void configurePDO(int SlaveNum, uint16_t coveringSlot, uint16_t PDOslot, std::li
             std::cout<<"\tSetting "<<std::hex<<PDOslot<<std::dec<<".0 to "<<(int)t8<<" ->"<<ec_SDOwrite(SlaveNum, PDOslot, 0, FALSE, sizeof(t8), &t8, EC_TIMEOUTRXM)<<std::endl;
     	v1800_1 &= ~(1<<31); sz = sizeof(v1800_1);
 	    rv = ec_SDOwrite( SlaveNum, coveringSlot, 1, FALSE, sz, &v1800_1, EC_TIMEOUTRXM);
+}
+
+void readTPDO(int slaveNum, uint16_t slot)
+{
+    std::cout<<"Reading "<<slot<<"   on "<<slaveNum<<std::endl;
+
+    uint8_t field0;
+    uint32_t field1;
+    uint32_t field2;
+    int sz;
+    int rv;
+
+    sz = sizeof(field0);
+    rv = ec_SDOread(slaveNum, slot, 0, FALSE, &sz, &field0, EC_TIMEOUTRXM);
+    std::cout<<"\t\t"<<slot<<".0 = "<<static_cast<int>(field0)<<" at res ="<<rv<<std::endl;
+     
+    sz = sizeof(field1);
+    rv = ec_SDOread(slaveNum, slot, 1, FALSE, &sz, &field1, EC_TIMEOUTRXM);
+    std::cout<<"\t\t"<<slot<<".1 = "<<std::hex<<field1<<std::dec<<" at res ="<<rv<<std::endl;
+     
+    sz = sizeof(field2);
+    rv = ec_SDOread(slaveNum, slot, 2, FALSE, &sz, &field2, EC_TIMEOUTRXM);
+    std::cout<<"\t\t"<<slot<<".2 = "<<std::hex<<field2<<std::dec<<" at res ="<<rv<<std::endl;
+     
 }
 
 int main(int argc, char * argv[])
@@ -75,6 +115,14 @@ int main(int argc, char * argv[])
 
     for( int s = 1; s <= ec_slavecount; ++s) {
         std::cout<<"Working on slave "<<s<<std::endl;
+
+            readTPDO(s, 0x2014);
+            readTPDO(s, 0x2015);
+            readTPDO(s, 0x2016);
+            readTPDO(s, 0x2017);
+
+
+
         int sz = sizeof( t8);
 
         t8 = 0;
@@ -88,9 +136,10 @@ int main(int argc, char * argv[])
     configurePDO(s, 0x1403, 0x1603, {  } );
 
 
-    configurePDO(s, 0x1800, 0x1A00, { 0x60610008, 0x60410010, 0x60640020, 0x10010008 } );
-    configurePDO(s, 0x1801, 0x1A01, { 0x606C0020, 0x60780010, 0x200F0010 } );
-    configurePDO(s, 0x1802, 0x1A02, { 0x60FD0020 } );
+    configurePDO(s, 0x1800, 0x1A00, { 0x60610008, 0x60410010, 0x60640020, 0x10010008 }, true );
+    configurePDO(s, 0x1801, 0x1A01, { 0x606C0020, 0x60780010, 0x200F0010 }, true );
+    configurePDO(s, 0x1802, 0x1A02, { 0x60FD0020 }, true );
+    configurePDO(s, 0x1803, 0x1A03, { }, true );
 
         t8 = 3;
         std::cout<<"\tSetting 1C12.0 to "<<(int)t8<<" -> "<<ec_SDOwrite(s, 0x1C12, 0, FALSE, sizeof(t8), &t8, EC_TIMEOUTRXM)<<std::endl;
