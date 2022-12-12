@@ -1,0 +1,7 @@
+<library path="lib/libarmin_hardware_interfaces">
+  <class name="armin_hardware_interface/ArminHW" type="armin_hardware_interface::ArminHW" base_class_type="hardware_interface::RobotHW">
+    <description>
+      Interface for Armin Robot
+    </description>
+  </class>
+</library>

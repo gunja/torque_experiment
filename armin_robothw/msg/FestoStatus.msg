@@ -1,0 +1,2 @@
+uint16 statusword
+uint8 error_register

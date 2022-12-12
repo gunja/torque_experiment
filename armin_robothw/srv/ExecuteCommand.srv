@@ -1,0 +1,4 @@
+uint8 cmd_type
+uint8 dev_num
+---
+bool result

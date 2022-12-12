@@ -86,6 +86,55 @@ void readTPDO(int slaveNum, uint16_t slot)
      
 }
 
+void read1Cxx(int slaveNum, uint16_t slot_index)
+{
+    uint8_t index0;
+    uint8_t nonzeroIndex;
+    int sz, rv;
+    uint16_t nonXeroIndex;
+
+    uint16_t full[5];
+
+    sz = sizeof(index0);
+
+    rv = ec_SDOread(slaveNum, slot_index, 0, FALSE, &sz, &index0, EC_TIMEOUTRXM);
+    std::cout<<"slave "<<slaveNum<<"  U8  at index "<<std::hex<<slot_index<<std::dec<<".0 = "
+            <<std::hex<<static_cast<int>(index0)<<std::dec<<"  with rv ="<<rv<<std::endl;
+    sz = sizeof(nonXeroIndex);
+    rv = ec_SDOread(slaveNum, slot_index, 0, FALSE, &sz, &nonXeroIndex, EC_TIMEOUTRXM);
+    std::cout<<"slave "<<slaveNum<<"  U16   at index "<<std::hex<<slot_index<<std::dec<<".0 = "
+            <<std::hex<<static_cast<int>(nonXeroIndex)<<std::dec<<"  with rv ="<<rv<<std::endl;
+
+    std::cout<<"Reading all the data"<<std::endl;
+    sz = sizeof(full);
+    rv = ec_SDOread(slaveNum, slot_index, 0, TRUE, &sz, &full[0], EC_TIMEOUTRXM);
+    std::cout<<"slave "<<slaveNum<<"  at index "<<std::hex<<slot_index<<std::dec<<". = "<<std::endl;
+        std::cout<<"\t0->"<<std::hex<<static_cast<int>(full[0])<<std::dec<<"  with rv ="<<rv<<std::endl;
+        std::cout<<"\t1->"<<std::hex<<static_cast<int>(full[1])<<std::dec<<"  with rv ="<<rv<<std::endl;
+        std::cout<<"\t2->"<<std::hex<<static_cast<int>(full[2])<<std::dec<<"  with rv ="<<rv<<std::endl;
+        std::cout<<"\t3->"<<std::hex<<static_cast<int>(full[3])<<std::dec<<"  with rv ="<<rv<<std::endl;
+        std::cout<<"\t4->"<<std::hex<<static_cast<int>(full[4])<<std::dec<<"  with rv ="<<rv<<std::endl;
+
+
+  for(int i = 1; i <=4; ++i)
+  {
+    sz = sizeof(nonXeroIndex);
+    rv = ec_SDOread(slaveNum, slot_index, i, FALSE, &sz, &nonXeroIndex, EC_TIMEOUTRXM);
+    std::cout<<"slave "<<slaveNum<<"  U16   at index "<<std::hex<<slot_index<<std::dec<<"."<<i<<" = "
+            <<std::hex<<static_cast<int>(nonXeroIndex)<<std::dec<<"  with rv ="<<rv<<std::endl;
+  }
+
+
+    std::cout<<"setting to 4 at .0"<<std::endl;
+    
+    sz = sizeof(index0);
+    index0 = 4;
+
+    rv = ec_SDOwrite(slaveNum, slot_index, 0, FALSE, sz, &index0, EC_TIMEOUTRXM);
+    std::cout<<"slave "<<slaveNum<<"  U8  at index "<<std::hex<<slot_index<<std::dec<<"  with rv ="<<rv<<std::endl;
+}
+
+
 int main(int argc, char * argv[])
 {
     char buff[200];
@@ -110,17 +159,26 @@ int main(int argc, char * argv[])
     }
     int slavesFound = ec_config_init(FALSE);
     std::cout<<"Discovered "<<slavesFound << " slaves on the network"<<std::endl;
-    std::cout<<"Press any key to start writing settings to each slave"<<std::endl;
-    std::cin>>buff;
 
     for( int s = 1; s <= ec_slavecount; ++s) {
-        std::cout<<"Working on slave "<<s<<std::endl;
+        std::cout<<"Reading out  slave "<<s<<std::endl;
 
             readTPDO(s, 0x2014);
             readTPDO(s, 0x2015);
             readTPDO(s, 0x2016);
             readTPDO(s, 0x2017);
 
+            read1Cxx(s, 0x1c12);
+            read1Cxx(s, 0x1c13);
+
+    }
+
+
+    std::cout<<"Press any key to start writing settings to each slave"<<std::endl;
+    std::cin>>buff;
+
+    for( int s = 1; s <= ec_slavecount; ++s) {
+        std::cout<<"Working on slave "<<s<<std::endl;
 
 
         int sz = sizeof( t8);
@@ -133,18 +191,18 @@ int main(int argc, char * argv[])
     configurePDO(s, 0x1400, 0x1600, { 0x60600008, 0x60400010, 0x60FF0020, 0x60980008 } );
     configurePDO(s, 0x1401, 0x1601, { 0x60820020, 0x607A0020 } );
     configurePDO(s, 0x1402, 0x1602, { 0x60810020, 0x607C0020 } );
-    configurePDO(s, 0x1403, 0x1603, {  } );
+    configurePDO(s, 0x1403, 0x1603, {  0x60710010 } );
 
 
     configurePDO(s, 0x1800, 0x1A00, { 0x60610008, 0x60410010, 0x60640020, 0x10010008 }, true );
     configurePDO(s, 0x1801, 0x1A01, { 0x606C0020, 0x60780010, 0x200F0010 }, true );
     configurePDO(s, 0x1802, 0x1A02, { 0x60FD0020 }, true );
-    configurePDO(s, 0x1803, 0x1A03, { }, true );
+    configurePDO(s, 0x1803, 0x1A03, { 0x60770010 }, true );
 
-        t8 = 3;
+        t8 = 4;
         std::cout<<"\tSetting 1C12.0 to "<<(int)t8<<" -> "<<ec_SDOwrite(s, 0x1C12, 0, FALSE, sizeof(t8), &t8, EC_TIMEOUTRXM)<<std::endl;
 
-        t8 = 3;
+        t8 = 4;
         std::cout<<"\tSetting 1C13.0 to "<<(int)t8<<" -> "<<ec_SDOwrite(s, 0x1C13, 0, FALSE, sizeof(t8), &t8, EC_TIMEOUTRXM)<<std::endl;
 
         t32 = 0x65766173;

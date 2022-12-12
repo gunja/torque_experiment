@@ -1,0 +1,12 @@
+armin:
+    hardware_interface:
+        loop_hz: 50 # Hz
+        type: armin_hardware_interface/ArminHW
+        joints:
+            - a1_joint
+            - a2_joint
+            - a3_joint
+            - a4_joint
+            - a5_joint
+            - a6_joint
+

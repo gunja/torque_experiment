@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="5.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>829</width>
+    <height>303</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QLabel" name="label_48">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>10</y>
+     <width>181</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Ускорение (об/мин / сек)</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_51">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>110</y>
+     <width>191</width>
+     <height>101</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>ВНИМАНИЕ!!! Зависимое сочленение A6 и будет использован мотор со вкладки &quot;Сценарий А6&quot;</string>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_50">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>10</y>
+     <width>181</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Замедление (об/мин / сек)</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="a_disable_motor">
+   <property name="geometry">
+    <rect>
+     <x>400</x>
+     <y>190</y>
+     <width>261</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Отключить мотор</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="a_index_display">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>40</y>
+     <width>113</width>
+     <height>27</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="a_accel_read">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>30</y>
+     <width>181</width>
+     <height>27</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="a_visible">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>220</x>
+     <y>270</y>
+     <width>161</width>
+     <height>27</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="a_write_XCels">
+   <property name="geometry">
+    <rect>
+     <x>530</x>
+     <y>10</y>
+     <width>91</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Записать
+уклоны</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_47">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>0</y>
+     <width>111</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Используемый индекс мотора</string>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_61">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>270</y>
+     <width>211</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Видимая частота вращения:</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="a_start_rotation">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>200</y>
+     <width>99</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Вертись</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_46">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>110</y>
+     <width>161</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Продолжительность вращения (сек)</string>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QDoubleSpinBox" name="a_rotate_duration">
+   <property name="geometry">
+    <rect>
+     <x>460</x>
+     <y>160</y>
+     <width>131</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="singleStep">
+    <double>0.166000000000000</double>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="a_accel_edit">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>70</y>
+     <width>181</width>
+     <height>27</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="a_speed">
+   <property name="geometry">
+    <rect>
+     <x>220</x>
+     <y>160</y>
+     <width>211</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="minimum">
+    <number>-5200</number>
+   </property>
+   <property name="maximum">
+    <number>4000</number>
+   </property>
+   <property name="singleStep">
+    <number>100</number>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="a_decel_edit">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>70</y>
+     <width>181</width>
+     <height>27</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="a6_rem_time_lbl_8">
+   <property name="geometry">
+    <rect>
+     <x>620</x>
+     <y>110</y>
+     <width>91</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Осталось вращаться</string>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_60">
+   <property name="geometry">
+    <rect>
+     <x>400</x>
+     <y>280</y>
+     <width>68</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>об / мин</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="a_clear_error">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>200</y>
+     <width>131</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Сбросить
+ошибку</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_49">
+   <property name="geometry">
+    <rect>
+     <x>220</x>
+     <y>130</y>
+     <width>211</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Скорость вращения (об/мин)</string>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="a_spin_motor_index">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>70</y>
+     <width>111</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="value">
+    <number>1</number>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="a_decel_read">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>30</y>
+     <width>181</width>
+     <height>27</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="a_rem_rotation">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>620</x>
+     <y>160</y>
+     <width>91</width>
+     <height>27</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="a_stop_rotation">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>190</y>
+     <width>99</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Не вертись</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>680</x>
+     <y>10</y>
+     <width>121</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Новая позиция</string>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="a_position">
+   <property name="geometry">
+    <rect>
+     <x>660</x>
+     <y>30</y>
+     <width>141</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="minimum">
+    <number>-999999999</number>
+   </property>
+   <property name="maximum">
+    <number>999999999</number>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="a_position_go">
+   <property name="geometry">
+    <rect>
+     <x>730</x>
+     <y>130</y>
+     <width>99</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>На позицию!</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>630</x>
+     <y>60</y>
+     <width>191</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>На скорости (0.1 град/сек):</string>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="a_position_velocity">
+   <property name="geometry">
+    <rect>
+     <x>660</x>
+     <y>80</y>
+     <width>141</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="maximum">
+    <number>240000</number>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="a_rotate_negative">
+   <property name="geometry">
+    <rect>
+     <x>700</x>
+     <y>200</y>
+     <width>61</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;</string>
+   </property>
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="a_rotate_positive">
+   <property name="geometry">
+    <rect>
+     <x>760</x>
+     <y>200</y>
+     <width>61</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&gt;</string>
+   </property>
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

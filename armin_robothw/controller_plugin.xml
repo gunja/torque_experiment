@@ -1,0 +1,5 @@
+<library path="lib/armin_controller">
+    <class name="armin_state_publisher_from_gui/ArminControllerPlugin"
+type="armin_controller_ns::ArminControllerInterface"
+base_class_type="controller_interface::Controller" />
+</library>

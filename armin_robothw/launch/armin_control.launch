@@ -1,0 +1,20 @@
+<launch>
+    <rosparam file="$(find armin_robothw)/config/controllers.yaml" command="load"/>
+    <rosparam file="$(find armin_robothw)/config/hardware.yaml" command="load"/>
+
+  <arg name="iface" default="enp59s0" />
+  <param  name="iface" value="$(arg iface)" />
+
+  <arg name="run_control" default="true"/>
+
+  <param
+    name="robot_description"
+    command="$(find xacro)/xacro --inorder '$(find armin_description)/urdf/armin_robot.urdf.xacro'" />
+
+    <node name="armin_control_node" pkg="armin_robothw" type="armin_control_node" output="screen" if="$(arg run_control)" />
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="/"
+        args="
+             /armin/controller/state
+             /armin/controller/position
+    "/>
+</launch>
