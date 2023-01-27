@@ -215,17 +215,104 @@ void EtherCATNetwork::set1C1x()
 }
 #endif
 
+void configurePDO(int SlaveNum, uint16_t coveringSlot, uint16_t PDOslot, std::list<uint32_t> pdo_maps, bool read180x_2 = false ){
+
+        std::cout<<"Getting "<<std::hex<<coveringSlot<<".1";
+	uint32_t v1800_1;
+    int sz = sizeof(v1800_1);
+	int rv = ec_SDOread(SlaveNum, coveringSlot, 1, FALSE, &sz, &v1800_1, EC_TIMEOUTRXM);
+	std::cout<<" resulted in   "<<rv<<"  with altered sz="<<sz<<"   and value = "<<
+		        std::hex<<v1800_1<<std::dec<<std::endl;
+    if ( v1800_1 & (1<<31) ) {
+		    std::cout<<"bit 31 is set"<<std::endl;
+    }
+	    v1800_1 |= (1<<31); sz = sizeof(v1800_1);
+	    rv = ec_SDOwrite( SlaveNum, coveringSlot, 1, FALSE, sz, &v1800_1, EC_TIMEOUTRXM);
+	  std::cout<<"  wrote "<<std::hex<<coveringSlot<<std::dec<<".1  with "<<rv<<std::endl;
+	   sz = sizeof(v1800_1);
+
+    std::cout<<"\t\tgetting "<<coveringSlot<<".0";
+    uint8_t zero_pos;
+    sz = sizeof(zero_pos);
+    rv = ec_SDOread(SlaveNum, coveringSlot, 0, FALSE, &sz, &zero_pos, EC_TIMEOUTRXM);
+    std::cout<<" rzlt as "<<rv<<"with decimal value = "<<static_cast<int>(zero_pos)<<std::endl;
+
+
+if(read180x_2) {
+        uint8_t trans_type;
+        sz = sizeof(trans_type);
+        rv = ec_SDOread(SlaveNum, coveringSlot, 2, FALSE, &sz, &trans_type, EC_TIMEOUTRXM);
+        std::cout<<"\t\tgetting "<<std::hex<<coveringSlot<<std::dec<<".2 -> "<<static_cast<int>(trans_type)<<"   at rez ="<<rv<<std::endl;
+    }
+
+        sz = sizeof(v1800_1);
+	   rv = ec_SDOread(SlaveNum, coveringSlot, 1, FALSE, &sz, &v1800_1, EC_TIMEOUTRXM);
+	   std::cout<<" resulted in   "<<rv<<"  with altered sz="<<sz<<"   and value = "<<
+		    std::hex<<v1800_1<<std::dec<<std::endl;
+	
+        int8_t t8 = 0;
+            std::cout<<"\tSetting "<<std::hex<<PDOslot<<std::dec<<".00 to 0 ->"
+             <<ec_SDOwrite(SlaveNum, PDOslot, 0, FALSE, sizeof(t8), &t8, EC_TIMEOUTRXM)<<std::endl;
+        int c= 1;
+        for(auto const &i: pdo_maps) {
+            uint32_t t32 = i;
+            std::cout<<"\tSetting "<<std::hex<<PDOslot<<std::dec<<"."<<c<<" to "
+                <<std::hex<<t32<<std::dec<<"  results in "
+                    <<ec_SDOwrite(SlaveNum, PDOslot, c, FALSE, sizeof(t32), &t32, EC_TIMEOUTRXM)<<std::endl;
+            ++c;
+        }
+        --c;
+            t8 = static_cast<uint8_t>(c);
+            std::cout<<"\tSetting "<<std::hex<<PDOslot<<std::dec<<".0 to "<<(int)t8<<" ->"<<ec_SDOwrite(SlaveNum, PDOslot, 0, FALSE, sizeof(t8), &t8, EC_TIMEOUTRXM)<<std::endl;
+    	v1800_1 &= ~(1<<31); sz = sizeof(v1800_1);
+	    rv = ec_SDOwrite( SlaveNum, coveringSlot, 1, FALSE, sz, &v1800_1, EC_TIMEOUTRXM);
+}
+
 
 int set1C1X__(uint16_t slave)
 {
+
+        std::cout<<"Working on slave "<<slave<<std::endl;
+
+    uint8_t t8;
+    uint32_t t32;
+
+        int sz = sizeof( t8);
+
+        t8 = 0;
+        std::cout<<"\tSetting 1C12.0 to "<<(int)t8<<" -> "<<ec_SDOwrite(slave, 0x1C12, 0, FALSE, sizeof(t8), &t8, EC_TIMEOUTRXM)<<std::endl;
+        t8 = 0;
+        std::cout<<"\tSetting 1C13.0 to "<<(int)t8<<" -> "<<ec_SDOwrite(slave, 0x1C13, 0, FALSE, sizeof(t8), &t8, EC_TIMEOUTRXM)<<std::endl;
+
+    configurePDO(slave, 0x1400, 0x1600, { 0x60600008, 0x60400010, 0x60FF0020, 0x60980008 } );
+    configurePDO(slave, 0x1401, 0x1601, { 0x60820020, 0x607A0020 } );
+    configurePDO(slave, 0x1402, 0x1602, { 0x60810020, 0x607C0020 } );
+    configurePDO(slave, 0x1403, 0x1603, {  0x60710010 } );
+
+
+    configurePDO(slave, 0x1800, 0x1A00, { 0x60610008, 0x60410010, 0x60640020, 0x10010008 }, true );
+    configurePDO(slave, 0x1801, 0x1A01, { 0x606C0020, 0x60780010, 0x200F0010 }, true );
+    configurePDO(slave, 0x1802, 0x1A02, { 0x60FD0020, 0x60770010 }, true );
+    configurePDO(slave, 0x1803, 0x1A03, { 0x60770010 }, true );
+
+        t8 = 4;
+        std::cout<<"\tSetting 1C12.0 to "<<(int)t8<<" -> "<<ec_SDOwrite(slave, 0x1C12, 0, FALSE, sizeof(t8), &t8, EC_TIMEOUTRXM)<<std::endl;
+
+        t8 = 4;
+        std::cout<<"\tSetting 1C13.0 to "<<(int)t8<<" -> "<<ec_SDOwrite(slave, 0x1C13, 0, FALSE, sizeof(t8), &t8, EC_TIMEOUTRXM)<<std::endl;
+
+        t32 = 0x65766173;
+        std::cout<<"Calling save for settings ->"<<ec_SDOwrite(slave, 0x1010, 1, FALSE, sizeof(t32), &t32, EC_TIMEOUTRXM) <<std::endl;
+/*
     uint8_t vOut;
     vOut = 4;
-    int sz = sizeof(vOut);
+    sz = sizeof(vOut);
     ec_SDOwrite(slave, 0x1c12, 0x00, FALSE, sz, &vOut, EC_TIMEOUTSAFE);
     uint8_t vIn;
-    vIn = 4;
+    vIn = 3;
     sz = sizeof(vIn);
-    ec_SDOwrite(slave, 0x1c12, 0x00, FALSE, sz, &vIn, EC_TIMEOUTSAFE);
+    ec_SDOwrite(slave, 0x1c13, 0x00, FALSE, sz, &vIn, EC_TIMEOUTSAFE);
+*/
 }
 
 
@@ -244,20 +331,26 @@ bool EtherCATNetwork::startNetwork(const char *interface)
 
 #ifndef S2_S3_manual
     slavesFound = ec_config_init(TRUE);
+    for(int i=1; i <= USED_FESTO_THINGS; ++i) {
+        ec_slave[i].PO2SOconfig = set1C1X__;
+        printf("Discovered at %d name: %s\n", i, ec_slave[i].name);
+    }
 #else
     slavesFound = ec_config_init(FALSE);
     for(int i=1; i <= USED_FESTO_THINGS; ++i) {
+
         ec_slave[i].SM[2].StartAddr =0x1600;
         ec_slave[i].SM[3].StartAddr =0x1A00;
-        ec_slave[i].SM[2].SMlength = sizeof(Master2Slave);
-        ec_slave[i].SM[3].SMlength = sizeof(Slave2Master);
-        ec_slave[i].SM[2].SMflags= 0x10024;
+        ec_slave[i].SM[2].SMflags= 0x10026;
         ec_slave[i].SM[3].SMflags= 0x10022;
-
         ec_slave[i].FMMU[0].FMMUactive=1;
         ec_slave[i].FMMU[1].FMMUactive=1;
         ec_slave[i].FMMU0func= 1;
         ec_slave[i].FMMU1func= 2;
+
+/*
+        ec_slave[i].SM[2].SMlength = sizeof(Master2Slave);
+        ec_slave[i].SM[3].SMlength = sizeof(Slave2Master);
 
 
         ec_slave[i].Dtype = 8;
@@ -265,9 +358,8 @@ bool EtherCATNetwork::startNetwork(const char *interface)
         ec_slave[i].Ibits = sizeof(Slave2Master) * 8;
         ec_slave[i].Obytes = sizeof(Master2Slave);
         ec_slave[i].Ibytes = sizeof(Slave2Master);
-
         ec_slave[i].configindex= 23;
-
+*/
         ec_slave[i].PO2SOconfig = set1C1X__;
 
     }
@@ -325,7 +417,7 @@ bool EtherCATNetwork::SwitchOperational()
     do
     {
             ec_send_processdata();
-            ec_receive_processdata(EC_TIMEOUTRET);
+            wks = ec_receive_processdata(EC_TIMEOUTRET);
         st = ec_statecheck(0, EC_STATE_OPERATIONAL, EC_TIMEOUTSTATE);
         ++count;
         std::cerr<<"Network state now is "<<ec_slave[0].state<<std::endl;
@@ -644,6 +736,7 @@ struct timespec add_us(const struct timespec &b, const unsigned long usec)
 
 void * EtherCATNetwork::CyclicFunction()
 {
+    int wks;
     while(keepThreadRunning)
     {
         usleep(SYNC_PERIOD_MS * 1000);
@@ -651,7 +744,7 @@ void * EtherCATNetwork::CyclicFunction()
         //copy latest required data to EtherCAT exchange region
         memcpy(IOmap, IOmapMirror, IOMAP_SIZE);
         ec_send_processdata();
-        ec_receive_processdata(EC_TIMEOUTRET);
+        wks = ec_receive_processdata(EC_TIMEOUTRET);
         // copy just received data ArminHW latest data
         memcpy(IOmapMirror, IOmap, IOMAP_SIZE);
 

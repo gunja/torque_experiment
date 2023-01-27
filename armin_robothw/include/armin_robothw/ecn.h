@@ -28,7 +28,7 @@ class EtherCATNetwork
 
         pthread_t cyclic_exchange_thread;
         bool keepThreadRunning;
-        std::mutex exchange_Lock;
+        //std::mutex exchange_Lock;
         std::condition_variable notifyChanges;
         std::mutex dataReadyMutex;
         std::condition_variable notifyReadyCyclic;
@@ -79,7 +79,7 @@ class EtherCATNetwork
 
         void setSlotDataUINT32(int slaveNum, int slotNum, int subslotNum, uint32_t newVal);
         void setSlotDataUINT8(int slaveNum, int slotNum, int subslotNum, uint8_t newVal);
-        std::mutex & getGuard() { return exchange_Lock;};
+        //std::mutex & getGuard() { return exchange_Lock;};
         std::condition_variable & getCondVar() { return notifyChanges;};
         std::mutex & getReadyMutex() { return dataReadyMutex;};
         std::condition_variable & getReadyDataCond() { return notifyReadyCyclic; };

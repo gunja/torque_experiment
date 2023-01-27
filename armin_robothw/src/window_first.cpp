@@ -252,7 +252,9 @@ void WindowFirst::on_updateCyclicTimer_timeout()
         }
     }
   {
-    std::lock_guard<std::mutex> lock {ecn.getGuard()};
+    std::unique_lock<std::mutex> dataLock { ecn.getReadyMutex()};
+    //std::lock_guard<std::mutex> lock {ecn.getGuard()};
+    ecn.getReadyDataCond().wait(dataLock);
     for(auto i = 0; i < 2; ++i) {
             f_cnt[i].updateOutputs();
     }

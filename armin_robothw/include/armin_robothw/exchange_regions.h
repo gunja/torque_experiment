@@ -22,6 +22,8 @@ typedef struct _master_slave_exchange {
     int32_t home_offset;  //0x607C0020
     //slaves R-PDO 4
     int16_t target_torque; // 0x6071:0x00 0x10    target_torque 
+    int16_t pad_32_1;
+    int32_t pad_64_1;
 } Master2Slave;
 
 typedef struct _slave_master_exchange {
@@ -35,9 +37,13 @@ typedef struct _slave_master_exchange {
     uint16_t last_warning_code; // 0x200f0010
     // slave T-PDO 3
     uint32_t digital_inputs;    //0x60fd0020
-    uint32_t padding;
+    int16_t torque_actual_value_pdo3; // 0x6077:0x00 0x10
+    //uint32_t padding;
+    uint16_t pad_32_1;
     // slave T-PDO 4
     int16_t torque_actual_value; // 0x6077:0x00 0x10
+    uint16_t pad_32_2;
+    uint32_t pad64_1;
     
 } Slave2Master;
 

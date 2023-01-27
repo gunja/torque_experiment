@@ -196,7 +196,7 @@ int main(int argc, char * argv[])
 
     configurePDO(s, 0x1800, 0x1A00, { 0x60610008, 0x60410010, 0x60640020, 0x10010008 }, true );
     configurePDO(s, 0x1801, 0x1A01, { 0x606C0020, 0x60780010, 0x200F0010 }, true );
-    configurePDO(s, 0x1802, 0x1A02, { 0x60FD0020 }, true );
+    configurePDO(s, 0x1802, 0x1A02, { 0x60FD0020, 0x60770010 }, true );
     configurePDO(s, 0x1803, 0x1A03, { 0x60770010 }, true );
 
         t8 = 4;
